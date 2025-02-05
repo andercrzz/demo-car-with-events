@@ -92,7 +92,7 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 			try {
 				if (notificatonQueue.peek() != null) {
 					for (final EventDTO event : notificatonQueue) {
-						if (SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE.equalsIgnoreCase(event.getEventType())) {
+						if (SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE.equalsIgnoreCase(event.getEventType())) {
 							/*if (reorchestration) {
 								logger.info("Recieved publisher custom event - started reorchestration.");
 								
@@ -197,13 +197,13 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 		}
 		
 		try {
-			arrowheadService.unsubscribeFromEventHandler(SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE, applicationSystemName, applicationSystemAddress, applicationSystemPort);
+			arrowheadService.unsubscribeFromEventHandler(SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE, applicationSystemName, applicationSystemAddress, applicationSystemPort);
 		} catch (final Exception ex) {
 			logger.debug("Exception happend in subscription initalization " + ex);
 		}
 		
 		try {
-			final SubscriptionRequestDTO subscription = SubscriberUtilities.createSubscriptionRequestDTO(SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE, subscriber, SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_NOTIFICATION_URI);
+			final SubscriptionRequestDTO subscription = SubscriberUtilities.createSubscriptionRequestDTO(SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE, subscriber, SubscriberConstants.PUBLISHER_DESTORYED_NOTIFICATION_URI);
 			subscription.setSources(sources);
 			
 			arrowheadService.subscribeToEventHandler(subscription);
@@ -216,7 +216,7 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 				logger.debug(ex);
 			}
 		} catch (final Exception ex) {
-			logger.debug("Could not subscribe to EventType: " + SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE );
+			logger.debug("Could not subscribe to EventType: " + SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE);
 		}
 	}
 	

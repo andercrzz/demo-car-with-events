@@ -49,7 +49,7 @@ public class SystemConsumerWithSubscriptionController {
 	}
 	
 	//-------------------------------------------------------------------------------------------------
-	@PostMapping(path = SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_NOTIFICATION_URI) 
+	@PostMapping(path = SubscriberConstants.PUBLISHER_DESTORYED_NOTIFICATION_URI) 
 	public void receiveEventDestroyed(@RequestBody final EventDTO event) {
 		logger.debug("receiveEventDestroyed started... ");
 		
