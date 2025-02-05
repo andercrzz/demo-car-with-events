@@ -17,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import ai.aitia.arrowhead.application.library.ArrowheadService;
 import ai.aitia.arrowhead.application.library.util.ApplicationCommonConstants;
 import ai.aitia.demo.car_common.dto.RegisteredSystemRequestDTO;
-import ai.aitia.demo.car_common.dto.RegisteredSystemResponseDTO;
 import eu.arrowhead.application.skeleton.subscriber.SubscriberUtilities;
 import eu.arrowhead.application.skeleton.subscriber.constants.SubscriberConstants;
 import eu.arrowhead.common.CommonConstants;
@@ -26,7 +25,6 @@ import eu.arrowhead.common.Utilities;
 import eu.arrowhead.common.dto.shared.EventDTO;
 import eu.arrowhead.common.dto.shared.OrchestrationFlags.Flag;
 import eu.arrowhead.common.dto.shared.OrchestrationFormRequestDTO;
-import eu.arrowhead.common.dto.shared.OrchestrationFormRequestDTO.Builder;
 import eu.arrowhead.common.dto.shared.OrchestrationResponseDTO;
 import eu.arrowhead.common.dto.shared.OrchestrationResultDTO;
 import eu.arrowhead.common.dto.shared.ServiceInterfaceResponseDTO;
@@ -113,10 +111,11 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 				}
 					
 				if (systemCreationService != null  && systemRequestingService != null) {
+					// Lista de sistemas nuevos a crear
 					final List<RegisteredSystemRequestDTO> systemsToCreate = List.of(new RegisteredSystemRequestDTO("MyAsset", "http://localhost:5080"), new RegisteredSystemRequestDTO("MyAsset2", "http://localhost:5081"), new RegisteredSystemRequestDTO("MyAsset3", "http://localhost:5082"), new RegisteredSystemRequestDTO("MyAsset4", "http://localhost:5083"));
-			    	
-					callSystemCreationService(systemCreationService , systemsToCreate);
-					callSystemRequestingService(systemRequestingService);
+			    	logger.info("WE SHOULD BE CREATING SOMETHING NOW.");
+					// callSystemCreationService(systemCreationService , systemsToCreate);
+					// callSystemRequestingService(systemRequestingService);
 				} else {
 					counter++;
 					
@@ -165,11 +164,11 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 			logger.info("Create a system request:");
 			printOut(systemRequestDTO);
 			final String token = orchestrationResult.getAuthorizationTokens() == null ? null : orchestrationResult.getAuthorizationTokens().get(getInterface());
-			final SystemResponseDTO carCreated = arrowheadService.consumeServiceHTTP(SystemResponseDTO.class, HttpMethod.valueOf(orchestrationResult.getMetadata().get(SystemConsumerConstants.HTTP_METHOD)),
+			final SystemResponseDTO systemCreated = arrowheadService.consumeServiceHTTP(SystemResponseDTO.class, HttpMethod.valueOf(orchestrationResult.getMetadata().get(SystemConsumerConstants.HTTP_METHOD)),
 					orchestrationResult.getProvider().getAddress(), orchestrationResult.getProvider().getPort(), orchestrationResult.getServiceUri(),
 					getInterface(), token, systemRequestDTO, new String[0]);
 			logger.info("Provider response");
-			printOut(carCreated);
+			printOut(systemCreated);
 		}			
     }
 	

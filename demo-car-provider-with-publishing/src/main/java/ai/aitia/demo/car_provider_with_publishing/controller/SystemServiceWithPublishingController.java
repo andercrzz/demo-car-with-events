@@ -51,7 +51,6 @@ public class SystemServiceWithPublishingController {
 
 	//=================================================================================================
 	// methods
-
 	//-------------------------------------------------------------------------------------------------
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody public List<RegisteredSystemResponseDTO> getSystems(@RequestParam(name = SystemProviderWithPublishingConstants.REQUEST_PARAM_NAME, required = false) final String name,
