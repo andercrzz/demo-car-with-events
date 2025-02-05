@@ -92,18 +92,20 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 			try {
 				if (notificatonQueue.peek() != null) {
 					for (final EventDTO event : notificatonQueue) {
-						if (SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE.equalsIgnoreCase(event.getEventType())) {
-							if (reorchestration) {
-								logger.info("Recieved publisher destroyed event - started reorchestration.");
+						if (SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE.equalsIgnoreCase(event.getEventType())) {
+							/*if (reorchestration) {
+								logger.info("Recieved publisher custom event - started reorchestration.");
 								
 								systemCreationService = orchestrateCreateSystemService();
 								systemRequestingService = orchestrateGetSystemService();
 							} else {
-								logger.info("Recieved publisher destroyed event - started shuting down.");
+								logger.info("Recieved publisher custom event - started shuting down.");
 								System.exit(0);
-							}
+							}*/
+
+							logger.info("Recieved publisher custom event registering new system in Basyx.");
 						} else {
-							logger.info("ConsumerTask recevied event - with type: " + event.getEventType() + ", and payload: " + event.getPayload() + ".");
+							logger.info("ConsumerTask recieved event - with type: " + event.getEventType() + ", and payload: " + event.getPayload() + ".");
 						}
 					}
 					
@@ -113,7 +115,7 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 				if (systemCreationService != null  && systemRequestingService != null) {
 					// Lista de sistemas nuevos a crear
 					final List<RegisteredSystemRequestDTO> systemsToCreate = List.of(new RegisteredSystemRequestDTO("MyAsset", "http://localhost:5080"), new RegisteredSystemRequestDTO("MyAsset2", "http://localhost:5081"), new RegisteredSystemRequestDTO("MyAsset3", "http://localhost:5082"), new RegisteredSystemRequestDTO("MyAsset4", "http://localhost:5083"));
-			    	logger.info("WE SHOULD BE CREATING SOMETHING NOW.");
+			    	// logger.info("WE SHOULD BE CREATING SOMETHING NOW.");
 					// callSystemCreationService(systemCreationService , systemsToCreate);
 					// callSystemRequestingService(systemRequestingService);
 				} else {
@@ -195,13 +197,13 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 		}
 		
 		try {
-			arrowheadService.unsubscribeFromEventHandler(SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE, applicationSystemName, applicationSystemAddress, applicationSystemPort);
+			arrowheadService.unsubscribeFromEventHandler(SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE, applicationSystemName, applicationSystemAddress, applicationSystemPort);
 		} catch (final Exception ex) {
 			logger.debug("Exception happend in subscription initalization " + ex);
 		}
 		
 		try {
-			final SubscriptionRequestDTO subscription = SubscriberUtilities.createSubscriptionRequestDTO(SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE, subscriber, SubscriberConstants.PUBLISHER_DESTORYED_NOTIFICATION_URI);
+			final SubscriptionRequestDTO subscription = SubscriberUtilities.createSubscriptionRequestDTO(SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE, subscriber, SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_NOTIFICATION_URI);
 			subscription.setSources(sources);
 			
 			arrowheadService.subscribeToEventHandler(subscription);
@@ -214,7 +216,7 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 				logger.debug(ex);
 			}
 		} catch (final Exception ex) {
-			logger.debug("Could not subscribe to EventType: " + SubscriberConstants.PUBLISHER_DESTROYED_EVENT_TYPE );
+			logger.debug("Could not subscribe to EventType: " + SubscriberConstants.PUBLISHER_MY_CUSTOM_EVENT_TYPE );
 		}
 	}
 	

@@ -12,6 +12,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,13 +100,22 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 		if (arrowheadService.echoCoreSystem(CoreSystem.EVENTHANDLER)) {
 			arrowheadService.updateCoreServiceURIs(CoreSystem.EVENTHANDLER);	
 		}
+
+		// Start a new thread to run publishDestroyedEvent() every 10 seconds
+		Timer timer = new Timer(true);
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				publishMyEvent();
+			}
+		}, 0, 10000);
 	}
 	
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public void customDestroy() {
-		//Unregister service
-		publishDestroyedEvent();
+		// Unregister service
+		// publishDestroyedEvent();
 		arrowheadService.unregisterServiceFromServiceRegistry(SystemProviderWithPublishingConstants.CREATE_SYSTEM_SERVICE_DEFINITION, SystemProviderWithPublishingConstants.SYSTEM_URI);
 		arrowheadService.unregisterServiceFromServiceRegistry(SystemProviderWithPublishingConstants.GET_SYSTEM_SERVICE_DEFINITION, SystemProviderWithPublishingConstants.SYSTEM_URI);
 	}
@@ -121,8 +132,8 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private void publishDestroyedEvent() {
-		final String eventType = PresetEventType.PUBLISHER_DESTROYED.getEventTypeName();
+	private void publishMyEvent() {
+		final String eventType = PresetEventType.MY_CUSTOM_EVENT.getEventTypeName();
 		
 		final SystemRequestDTO source = new SystemRequestDTO();
 		source.setSystemName(mySystemName);
@@ -133,7 +144,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 		}
 
 		final Map<String,String> metadata = null;
-		final String payload = PublisherConstants.PUBLISHR_DESTROYED_EVENT_PAYLOAD;
+		final String payload = PublisherConstants.PUBLISHER_MY_CUSTOM_EVENT_PAYLOAD;
 		final String timeStamp = Utilities.convertZonedDateTimeToUTCString( ZonedDateTime.now() );
 		
 		final EventPublishRequestDTO publishRequestDTO = new EventPublishRequestDTO(
