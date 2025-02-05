@@ -49,6 +49,11 @@ public class SystemServiceWithPublishingController {
 	@Value( SystemProviderWithPublishingConstants.$SERVICE_LIMIT_WD )
 	private int serviceLimit;
 
+	public SystemServiceWithPublishingController() {
+        Thread eventPublisherThread = new Thread(new EventPublisherThread(publisherService));
+        eventPublisherThread.start();
+    }
+
 	//=================================================================================================
 	// methods
 	//-------------------------------------------------------------------------------------------------
