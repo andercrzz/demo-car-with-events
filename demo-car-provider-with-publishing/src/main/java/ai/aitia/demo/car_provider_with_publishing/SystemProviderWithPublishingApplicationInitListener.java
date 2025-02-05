@@ -107,6 +107,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 			@Override
 			public void run() {
 				publishMyEvent();
+				logger.info("Sending event to event handler");
 			}
 		}, 0, 10000);
 	}
@@ -115,7 +116,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 	@Override
 	public void customDestroy() {
 		// Unregister service
-		// publishDestroyedEvent();
+		publishMyEvent();
 		arrowheadService.unregisterServiceFromServiceRegistry(SystemProviderWithPublishingConstants.CREATE_SYSTEM_SERVICE_DEFINITION, SystemProviderWithPublishingConstants.SYSTEM_URI);
 		arrowheadService.unregisterServiceFromServiceRegistry(SystemProviderWithPublishingConstants.GET_SYSTEM_SERVICE_DEFINITION, SystemProviderWithPublishingConstants.SYSTEM_URI);
 	}
