@@ -27,7 +27,6 @@ import ai.aitia.arrowhead.application.library.ArrowheadService;
 import ai.aitia.arrowhead.application.library.config.ApplicationInitListener;
 import ai.aitia.arrowhead.application.library.util.ApplicationCommonConstants;
 import eu.arrowhead.application.skeleton.provider.security.ProviderSecurityConfig;
-import eu.arrowhead.application.skeleton.publisher.constants.PublisherConstants;
 import eu.arrowhead.application.skeleton.publisher.event.PresetEventType;
 import eu.arrowhead.common.CommonConstants;
 import eu.arrowhead.common.Utilities;
@@ -145,7 +144,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 		}
 
 		final Map<String,String> metadata = null;
-		final String payload = PublisherConstants.PUBLISHR_DESTROYED_EVENT_PAYLOAD;
+		final String payload = "Pinche el evento destruido";
 		final String timeStamp = Utilities.convertZonedDateTimeToUTCString( ZonedDateTime.now() );
 		
 		final EventPublishRequestDTO publishRequestDTO = new EventPublishRequestDTO(

@@ -109,7 +109,7 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 								System.exit(0);
 							}*/
 
-							logger.info("Recieved publisher custom event registering new system in Basyx.");
+							logger.info("Recieved publisher custom event registering new system in Basyx." + event.getPayload());
 
 							//=================================================================================
 							String json = "{"
