@@ -1,5 +1,11 @@
 package ai.aitia.demo.car_consumer_with_subscribing;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
@@ -104,6 +110,44 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 							}*/
 
 							logger.info("Recieved publisher custom event registering new system in Basyx.");
+
+							//=================================================================================
+							String json = "{"
+								+ "\"idShort\": \"FirstEventAAS\","
+								+ "\"identification\": {"
+								+ "\"id\": \"FirstEventAASID\","
+								+ "\"idType\": \"Custom\""
+								+ "},"
+								+ "\"endpoints\": ["
+								+ "{"
+								+ "\"type\": \"http\","
+								+ "\"address\": \"http://localhost:5080\""
+								+ "}"
+								+ "],"
+								+ "\"submodels\": [{"
+								+ "\"idShort\": \"FirstEventSubmodel\","
+								+ "\"identification\": {"
+								+ "\"id\": \"FirstEventSubmodelID\""
+								+ "},"
+								+ "\"endpoints\": ["
+								+ "{"
+								+ "\"type\": \"http\","
+								+ "\"address\": \"http://localhost:5080/aas/submodels/FirstEventSubmodel\""
+								+ "}]"
+								+ "}]"
+								+ "}";
+
+							HttpClient client = HttpClient.newHttpClient();
+							HttpRequest request = HttpRequest.newBuilder()
+								.uri(URI.create("http://localhost:8082/registry/api/v1/registry/FirstEventAASID"))
+								.header("Content-Type", "application/json")
+								.PUT(BodyPublishers.ofString(json))
+								.build();
+
+							client.sendAsync(request, BodyHandlers.ofString())
+								.thenApply(HttpResponse::body)
+								.thenAccept(System.out::println)
+								.join();
 						} else {
 							logger.info("ConsumerTask recieved event - with type: " + event.getEventType() + ", and payload: " + event.getPayload() + ".");
 						}
