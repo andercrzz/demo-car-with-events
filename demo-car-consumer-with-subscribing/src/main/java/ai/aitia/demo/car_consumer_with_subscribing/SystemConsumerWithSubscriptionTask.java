@@ -109,45 +109,61 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 								System.exit(0);
 							}*/
 
-							logger.info("Recieved publisher custom event registering new system in Basyx." + event.getPayload());
+							logger.info("Recieved publisher custom event.");
 
+							String[] parts = event.getPayload().split("/", 2);
+							if (parts.length == 2) {
+								String name = parts[0];
+								String endpoint = parts[1];
+							
+								// Usar name y endpoint
+								logger.info("Name: " + name);
+								logger.info("Endpoint: " + endpoint);
+
+								String json = String.format("{"
+									+ "\"idShort\": \"%s\","
+									+ "\"identification\": {"
+									+ "\"id\": \"%sID\","
+									+ "\"idType\": \"Custom\""
+									+ "},"
+									+ "\"endpoints\": ["
+									+ "{"
+									+ "\"type\": \"http\","
+									+ "\"address\": \"%s\""
+									+ "}"
+									+ "],"
+									+ "\"submodels\": [{"
+									+ "\"idShort\": \"%sSubmodel\","
+									+ "\"identification\": {"
+									+ "\"id\": \"%sSubmodelID\""
+									+ "},"
+									+ "\"endpoints\": ["
+									+ "{"
+									+ "\"type\": \"http\","
+									+ "\"address\": \"%s/aas/submodels/%sSubmodel\""
+									+ "}]"
+									+ "}]"
+									+ "}", name, name, endpoint, name, name, endpoint, name);
+
+								HttpClient client = HttpClient.newHttpClient();
+								HttpRequest request = HttpRequest.newBuilder()
+									.uri(URI.create("http://localhost:8082/registry/api/v1/registry/"+name+"ID"))
+									.header("Content-Type", "application/json")
+									.PUT(BodyPublishers.ofString(json))
+									.build();
+
+								client.sendAsync(request, BodyHandlers.ofString())
+									.thenApply(HttpResponse::body)
+									.thenAccept(System.out::println)
+									.join();
+
+									logger.info("New system registered in Basyx.");
+
+							} else {
+								logger.error("Invalid payload format");
+							}
+	
 							//=================================================================================
-							String json = "{"
-								+ "\"idShort\": \"FirstEventAAS\","
-								+ "\"identification\": {"
-								+ "\"id\": \"FirstEventAASID\","
-								+ "\"idType\": \"Custom\""
-								+ "},"
-								+ "\"endpoints\": ["
-								+ "{"
-								+ "\"type\": \"http\","
-								+ "\"address\": \"http://localhost:5080\""
-								+ "}"
-								+ "],"
-								+ "\"submodels\": [{"
-								+ "\"idShort\": \"FirstEventSubmodel\","
-								+ "\"identification\": {"
-								+ "\"id\": \"FirstEventSubmodelID\""
-								+ "},"
-								+ "\"endpoints\": ["
-								+ "{"
-								+ "\"type\": \"http\","
-								+ "\"address\": \"http://localhost:5080/aas/submodels/FirstEventSubmodel\""
-								+ "}]"
-								+ "}]"
-								+ "}";
-
-							HttpClient client = HttpClient.newHttpClient();
-							HttpRequest request = HttpRequest.newBuilder()
-								.uri(URI.create("http://localhost:8082/registry/api/v1/registry/FirstEventAASID"))
-								.header("Content-Type", "application/json")
-								.PUT(BodyPublishers.ofString(json))
-								.build();
-
-							client.sendAsync(request, BodyHandlers.ofString())
-								.thenApply(HttpResponse::body)
-								.thenAccept(System.out::println)
-								.join();
 						} else {
 							logger.info("ConsumerTask recieved event - with type: " + event.getEventType() + ", and payload: " + event.getPayload() + ".");
 						}
@@ -159,7 +175,6 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 				if (systemCreationService != null  && systemRequestingService != null) {
 					// Lista de sistemas nuevos a crear
 					final List<RegisteredSystemRequestDTO> systemsToCreate = List.of(new RegisteredSystemRequestDTO("MyAsset", "http://localhost:5080"), new RegisteredSystemRequestDTO("MyAsset2", "http://localhost:5081"), new RegisteredSystemRequestDTO("MyAsset3", "http://localhost:5082"), new RegisteredSystemRequestDTO("MyAsset4", "http://localhost:5083"));
-			    	// logger.info("WE SHOULD BE CREATING SOMETHING NOW.");
 					// callSystemCreationService(systemCreationService , systemsToCreate);
 					// callSystemRequestingService(systemRequestingService);
 				} else {

@@ -12,8 +12,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,7 +100,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 		}
 
 		// Start a new thread to run publishDestroyedEvent() every 10 seconds
-		Timer timer = new Timer(true);
+		/*Timer timer = new Timer(true);
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
@@ -109,13 +108,52 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 				logger.info("Sending event to event handler");
 			}
 		}, 0, 10000);
+		*/
+
+		// Show menu in console
+		showMenu();
+	}
+
+	// Method to show menu and handle user input
+	private void showMenu() {
+		Scanner scanner = new Scanner(System.in);
+		while (true) {
+			System.out.println("Select an option:");
+			System.out.println("1. View assets");
+			System.out.println("2. Create new asset");
+			System.out.println("3. Exit");
+
+			int choice = scanner.nextInt();
+			scanner.nextLine(); // Consume newline
+
+			switch (choice) {
+				case 1:
+					// Logic to view assets
+					System.out.println("Viewing assets...");
+					// Add your logic here
+					break;
+				case 2:
+					// Logic to create new asset
+					System.out.println("Enter asset name:");
+					String name = scanner.nextLine();
+					System.out.println("Enter asset endpoint:");
+					String endpoint = scanner.nextLine();
+					publishMyEvent(name, endpoint);
+					break;
+				case 3:
+					System.out.println("Exiting...");
+					scanner.close();
+					return;
+				default:
+					System.out.println("Invalid choice. Please try again.");
+			}
+		}
 	}
 	
 	//-------------------------------------------------------------------------------------------------
 	@Override
 	public void customDestroy() {
 		// Unregister service
-		publishMyEvent();
 		arrowheadService.unregisterServiceFromServiceRegistry(SystemProviderWithPublishingConstants.CREATE_SYSTEM_SERVICE_DEFINITION, SystemProviderWithPublishingConstants.SYSTEM_URI);
 		arrowheadService.unregisterServiceFromServiceRegistry(SystemProviderWithPublishingConstants.GET_SYSTEM_SERVICE_DEFINITION, SystemProviderWithPublishingConstants.SYSTEM_URI);
 	}
@@ -132,7 +170,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	private void publishMyEvent() {
+	private void publishMyEvent(String name, String endpoint) {
 		final String eventType = PresetEventType.MY_CUSTOM_EVENT.getEventTypeName();
 		
 		final SystemRequestDTO source = new SystemRequestDTO();
@@ -144,7 +182,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 		}
 
 		final Map<String,String> metadata = null;
-		final String payload = "Pinche el evento destruido";
+		final String payload = name + "/" + endpoint;
 		final String timeStamp = Utilities.convertZonedDateTimeToUTCString( ZonedDateTime.now() );
 		
 		final EventPublishRequestDTO publishRequestDTO = new EventPublishRequestDTO(
