@@ -1,6 +1,10 @@
 package ai.aitia.demo.car_provider_with_publishing;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +20,8 @@ import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -130,23 +136,54 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 				case 1:
 					// Logic to view assets
 					System.out.println("Viewing assets...");
-					// Add your logic here
+					viewAssets();
 					break;
 				case 2:
 					// Logic to create new asset
-					System.out.println("Enter asset name:");
+					System.out.println("Enter asset name:\n");
 					String name = scanner.nextLine();
-					System.out.println("Enter asset endpoint:");
+					System.out.println("Enter asset endpoint:\n");
 					String endpoint = scanner.nextLine();
 					publishMyEvent(name, endpoint);
 					break;
 				case 3:
 					System.out.println("Exiting...");
 					scanner.close();
+					customDestroy();
 					return;
 				default:
 					System.out.println("Invalid choice. Please try again.");
 			}
+		}
+	}
+
+	// Method to view assets
+	private void viewAssets() {
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri(URI.create("http://localhost:8082/registry/api/v1/registry"))
+			.GET()
+			.build();
+
+		client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+			.thenApply(HttpResponse::body)
+			.thenAccept(this::parseAndDisplayAssets)
+			.join();
+	}
+
+	// Method to parse and display assets
+	private void parseAndDisplayAssets(String responseBody) {
+		JSONArray assets = new JSONArray(responseBody);
+		for (int i = 0; i < assets.length(); i++) {
+			JSONObject asset = assets.getJSONObject(i);
+			String idShort = asset.getString("idShort");
+			String id = asset.getJSONObject("identification").getString("id");
+			String endpoint = asset.getJSONArray("endpoints").getJSONObject(0).getString("address");
+
+			System.out.println("Asset ID Short: " + idShort);
+			System.out.println("Asset ID: " + id);
+			System.out.println("Endpoint: " + endpoint);
+			System.out.println("-------------------------");
 		}
 	}
 	
