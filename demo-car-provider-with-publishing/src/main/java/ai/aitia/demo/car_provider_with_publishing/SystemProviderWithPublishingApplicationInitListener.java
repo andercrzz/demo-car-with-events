@@ -230,6 +230,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 				timeStamp);
 		
 		arrowheadService.publishToEventHandler(publishRequestDTO);
+		logger.error("Event published: " + publishRequestDTO);
 	}
 
 	//-------------------------------------------------------------------------------------------------

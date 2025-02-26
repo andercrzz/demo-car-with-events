@@ -109,7 +109,7 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 								System.exit(0);
 							}*/
 
-							logger.info("Recieved publisher custom event.");
+							logger.error("Recieved publisher custom event.");
 
 							String[] parts = event.getPayload().split("/", 2);
 							if (parts.length == 2) {
@@ -117,8 +117,8 @@ public class SystemConsumerWithSubscriptionTask extends Thread {
 								String endpoint = parts[1];
 							
 								// Usar name y endpoint
-								logger.info("Name: " + name);
-								logger.info("Endpoint: " + endpoint);
+								logger.error("Name: " + name);
+								logger.error("Endpoint: " + endpoint);
 
 								String json = String.format("{"
 									+ "\"idShort\": \"%s\","
