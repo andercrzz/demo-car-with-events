@@ -161,7 +161,7 @@ public class SystemProviderWithPublishingApplicationInitListener extends Applica
 	private void viewAssets() {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
-			.uri(URI.create("http://localhost:8082/registry/api/v1/registry"))
+			.uri(URI.create("https://localhost:8082/registry/api/v1/registry"))
 			.GET()
 			.build();
 
