@@ -5,7 +5,7 @@ public class SubscriberConstants {
 	// members
 
 	public static final String NOTIFICATION_QUEUE = "notifications";
-	public static final String PUBLISHER_DESTORYED_NOTIFICATION_URI = "/" + "publisherdestroyed";
+	public static final String PUBLISHER_DESTORYED_NOTIFICATION_URI = "publisherdestroyed";
 	public static final String REQUEST_RECEIVED_NOTIFICATION_URI = "/" + "requestreceived";
 	public static final String PRESET_EVENT_TYPES = "preset_events";
 	public static final String $PRESET_EVENT_TYPES_WD = "${" + PRESET_EVENT_TYPES + ":" + SubscriberDefaults.DEFAULT_PRESET_EVENT_TYPES + "}";
